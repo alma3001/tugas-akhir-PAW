@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulasi Rantai Makanan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&family=Fontdiner+Swanky&display=swap");
+      .text-stroke {
+        text-shadow: -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white,
+          1px 1px 2px white;
+      }
+      #biome-name {
+        font-family: DynaPuff;
+        font-size: 24px;
+        color: green;
+        text-shadow: -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white,
+          1px 1px 2px white;
+      }
+      #role-description {
+        background-color: rgba(255, 255, 255, 0.649);
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body
+    class="flex justify-center items-center h-screen bg-cover bg-center"
+    style="
+      background-image: url('https://media.istockphoto.com/id/1084416182/id/vektor/langit-dan-awan-langit-latar-belakang-dan-awan-dengan-warna-biru-kartun-latar-belakang.jpg?s=612x612&w=0&k=20&c=iSLGcmIMZ0oFco_JSKKyD5lyNdubLzwE-yvB5K92Ev8=');
+    "
+  >
+    <audio id="bg-music" loop autoplay>
+      <source
+        src="https://eta.vgmtreasurechest.com/soundtracks/pokemon-black-and-white-2-super-music-collection/rkcqjswtiq/1-04.%20Aspertia%20City.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="button-sound">
+      <source
+        src="https://www.myinstants.com/media/sounds/button-click.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+
+    <div id="mute-container" class="absolute bottom-5 right-5">
+      <img
+        id="mute-btn"
+        src="https://cdn.pixabay.com/photo/2021/10/09/12/45/mute-6694067_1280.png"
+        class="w-12 h-12 bg-white p-2 rounded-full cursor-pointer hover:scale-110 transition"
+        onclick="toggleMute()"
+        alt="Mute"
+      />
+    </div>
+
+    <div
+      id="main-menu"
+      class="w-[900px] h-[600px] bg-cover bg-center rounded-lg shadow-lg flex flex-col items-center justify-center p-8"
+      style="
+        background-image: url('https://png.pngtree.com/thumb_back/fh260/background/20220509/pngtree-cartoon-nature-landscape-green-field-with-pond-image_1340114.jpg');
+      "
+    >
+      <h1
+        class="text-6xl font-bold text-green-600 text-stroke text-center"
+        style="font-family: 'Fontdiner Swanky', cursive"
+      >
+        Simulasi Rantai Makanan
+      </h1>
+      <p
+        class="text-lg text-green-700 mt-2 text-stroke text-center"
+        style="font-family: DynaPuff"
+      >
+        Pelajari bagaimana produsen, konsumen, dan predator berinteraksi dalam
+        ekosistem.
+      </p>
+      <img
+        src="https://cdn.pixabay.com/photo/2012/04/11/12/22/play-27918_1280.png"
+        class="mt-6 w-20 h-20 cursor-pointer hover:scale-110 transition"
+        onclick="showBiomeSelection()"
+        alt="Play"
+      />
+      <img
+        src="https://cdn.pixabay.com/photo/2012/04/13/00/22/info-31224_1280.png"
+        class="absolute bottom-5 left-5 w-12 h-12 cursor-pointer hover:scale-110 transition"
+        onclick="showDescription()"
+        alt="Deskripsi"
+      />
+
+      <img
+        src="https://cdn.pixabay.com/photo/2019/08/11/18/48/icon-4399681_1280.png"
+        class="absolute bottom-5 left-1/2 transform -translate-x-1/2 w-20 h-20 rounded-full cursor-pointer hover:scale-110 transition"
+        onclick="toggleTeamInfo()"
+        alt="Team Info"
+      />
+
+      <div
+        id="team-info"
+        class="hidden absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-blue-200 p-6 rounded-lg shadow-lg flex gap-8 text-lg"
+      >
+        <div class="text-center">
+          <img
+            src="foto/foto3.png"
+            class="w-32 h-32 rounded-full"
+            alt="Member 1"
+          />
+          <p class="font-bold">Nadya Arifah R</p>
+          <p>2305176020</p>
+        </div>
+        <div class="text-center">
+          <img
+            src="foto/foto2.jpg"
+            class="w-32 h-32 rounded-full"
+            alt="Member 2"
+          />
+          <p class="font-bold">Alma Kayla Putri</p>
+          <p>2305176021</p>
+        </div>
+        <div class="text-center">
+          <img
+            src="foto/foto1.jpg"
+            class="w-32 h-32 rounded-full"
+            alt="Member 3"
+          />
+          <p class="font-bold">Rany Arsydianti</p>
+          <p>2305176037</p>
+        </div>
+        <div class="text-center">
+          <img
+            src="https://raw.githubusercontent.com/Aryaweda123/Tugas-PAW/refs/heads/main/pp.JPG"
+            class="w-32 h-32 rounded-full"
+            alt="Member 4"
+          />
+          <p class="font-bold">I Made Arya WP</p>
+          <p>2305176027</p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="biome-menu"
+      class="hidden w-[900px] h-[600px] bg-cover bg-center rounded-lg shadow-lg flex flex-col items-center justify-center p-8 relative"
+      style="
+        background-image: url('https://png.pngtree.com/thumb_back/fh260/background/20220509/pngtree-cartoon-nature-landscape-green-field-with-pond-image_1340114.jpg');
+      "
+    >
+      <h1
+        class="text-6xl font-bold text-green-600 text-stroke text-center"
+        style="font-family: 'Fontdiner Swanky', cursive"
+      >
+        Pilih Bioma
+      </h1>
+      <div class="mt-6 flex flex-wrap justify-center gap-4">
+        <img
+          src="https://png.pngtree.com/png-clipart/20230914/original/pngtree-cartoon-forest-icon-in-the-round-vector-png-image_11086049.png"
+          class="w-24 h-24 rounded-xl cursor-pointer hover:scale-110 transition"
+          onclick="showSimulation('Hutan')"
+          alt="Hutan"
+        />
+        <img
+          src="https://png.pngtree.com/png-vector/20230801/ourmid/pngtree-cartoon-landscape-with-grassy-hills-and-trees-vector-png-image_6819795.png"
+          class="w-24 h-24 rounded-xl cursor-pointer hover:scale-110 transition"
+          onclick="showSimulation('PadangRumput')"
+          alt="Padang Rumput"
+        />
+        <img
+          src="https://png.pngtree.com/png-clipart/20230916/original/pngtree-cartoon-desert-sticker-in-round-shape-with-cactus-trees-and-sun-png-image_12233634.png"
+          class="w-24 h-24 rounded-xl cursor-pointer hover:scale-110 transition"
+          onclick="showSimulation('Gurun')"
+          alt="Gurun"
+        />
+        <img
+          src="https://png.pngtree.com/png-clipart/20230915/original/pngtree-cartoon-sea-animals-in-a-round-circle-under-the-sea-vector-png-image_12167737.png"
+          class="w-24 h-24 rounded-xl cursor-pointer hover:scale-110 transition"
+          onclick="showSimulation('Laut')"
+          alt="Laut"
+        />
+        <img
+          src="https://png.pngtree.com/png-vector/20230801/ourmid/pngtree-wild-nature-graphic-icon-with-a-polar-bear-island-and-a-vector-png-image_6819789.png"
+          class="w-24 h-24 rounded-xl cursor-pointer hover:scale-110 transition"
+          onclick="showSimulation('Kutub')"
+          alt="Kutub"
+        />
+      </div>
+      <img
+        src="https://cdn.pixabay.com/photo/2017/07/07/02/06/symbol-2480166_1280.png"
+        class="absolute bottom-5 left-1/2 transform -translate-x-1/2 w-20 h-20 rounded-full cursor-pointer hover:scale-110 transition"
+        onclick="showMainMenu()"
+        alt="Menu Utama"
+      />
+    </div>
+
+    <div
+      id="simulation"
+      class="hidden w-[900px] h-[600px] bg-cover bg-center rounded-lg shadow-lg flex flex-col items-center justify-center p-8 relative"
+    >
+      <h1
+        class="text-6xl font-bold text-green-600 text-stroke text-center"
+        style="font-family: 'Fontdiner Swanky', cursive"
+      >
+        Proses Rantai Makanan
+      </h1>
+      <p id="biome-name" class="text-lg text-gray-700 mt-2"></p>
+      <div id="food-chain" class="mt-6 flex flex-row items-center gap-4">
+        <img
+          id="produsen"
+          class="w-32 h-32 rounded-xl cursor-pointer hover:scale-110 transition"
+          onclick="selectOrganism('konsumen-primer')"
+          alt="Produsen"
+        />
+        <img
+          id="konsumen-primer"
+          class="w-32 h-32 rounded-xl cursor-pointer hover:scale-110 transition"
+          onclick="selectOrganism('konsumen-sekunder')"
+          alt="Konsumen Primer"
+        />
+        <img
+          id="konsumen-sekunder"
+          class="w-32 h-32 rounded-xl cursor-pointer hover:scale-110 transition"
+          onclick="selectOrganism('konsumen-puncak')"
+          alt="Konsumen Sekunder"
+        />
+        <img
+          id="konsumen-puncak"
+          class="w-32 h-32 rounded-xl cursor-pointer hover:scale-110 transition"
+          alt="Konsumen Puncak"
+        />
+      </div>
+      <p id="role-description" class=" bg-gray-100 p-2 text-center rounded-lg text-gray-700 mt-4"></p>
+      <img
+        src="https://cdn.pixabay.com/photo/2017/07/07/02/06/symbol-2480166_1280.png"
+        class="absolute bottom-5 left-1/2 transform -translate-x-1/2 w-20 h-20 rounded-full cursor-pointer hover:scale-110 transition"
+        onclick="resetFoodChain(); showMainMenu();"
+        alt="Menu Utama"
+      />
+      <img
+        src="https://cdn.pixabay.com/photo/2012/04/02/16/03/back-24838_1280.png"
+        class="absolute bottom-5 right-5 w-20 h-20 rounded-full cursor-pointer hover:scale-110 transition"
+        onclick="resetFoodChain(); showBiomeSelection();"
+        alt="Back"
+      />
+    </div>
+
+    <script>
+      let bgMusic = document.getElementById("bg-music");
+      let muteBtn = document.getElementById("mute-btn");
+      let muteBtnBiome = document.getElementById("mute-btn-biome");
+      let isMuted = false;
+      let stage = 0;
+
+      function toggleTeamInfo() {
+        playButtonSound();
+        let teamInfo = document.getElementById("team-info");
+        teamInfo.classList.toggle("hidden");
+      }
+
+      function playButtonSound() {
+        let buttonSound = document.getElementById("button-sound");
+        buttonSound.currentTime = 0;
+        buttonSound.play();
+      }
+
+      function showBiomeSelection() {
+        playButtonSound();
+        document.getElementById("main-menu").classList.add("hidden");
+        document.getElementById("biome-menu").classList.remove("hidden");
+        document.getElementById("simulation").classList.add("hidden");
+        bgMusic.play();
+      }
+
+      function showMainMenu() {
+        playButtonSound();
+        document.getElementById("biome-menu").classList.add("hidden");
+        document.getElementById("simulation").classList.add("hidden");
+        document.getElementById("main-menu").classList.remove("hidden");
+      }
+
+      function showDescription() {
+        playButtonSound();
+        alert(
+          "Simulasi ini menunjukkan bagaimana proses terjadinya rantai makanan dalam setiap bioma alam."
+        );
+      }
+
+      const foodChains = {
+        Hutan: {
+          produsen:
+            "https://png.pngtree.com/png-vector/20230728/ourmid/pngtree-fruit-tree-vector-png-image_7011693.png",
+          konsumenPrimer:
+            "https://png.pngtree.com/png-clipart/20240515/original/pngtree-cute-bird-cartoon-character-png-image_15098932.png",
+          konsumenSekunder:
+            "https://png.pngtree.com/png-clipart/20220404/original/pngtree-cute-fox-cartoon-character-vector-illustration-png-image_7513157.png",
+          konsumenPuncak:
+            "https://png.pngtree.com/png-clipart/20241013/original/pngtree-cute-cartoon-tiger-png-image_16305038.png",
+          deskripsi:
+            "Di hutan, buah sebagai produsen dimakan oleh burung, kemudian dimangsa rubah, dan harimau sebagai predator puncak.",
+        },
+        PadangRumput: {
+          produsen:
+            "https://cdn.pixabay.com/photo/2016/05/26/18/11/lawn-1417835_640.png",
+          konsumenPrimer:
+            "https://png.pngtree.com/png-clipart/20241018/original/pngtree-insect-marvels-understanding-the-role-of-grasshoppers-in-ecosystems-png-image_16374251.png",
+          konsumenSekunder:
+            "https://png.pngtree.com/png-clipart/20240602/original/pngtree-a-raccoon-is-sitting-on-white-background-png-image_15222704.png",
+          konsumenPuncak:
+            "https://png.pngtree.com/png-clipart/20240310/original/pngtree-a-realistic-wolf-art-pic-png-image_14557686.png",
+          deskripsi:
+            "Di padang rumput, rumput dimakan oleh belalang, lalu dimangsa rakun, dan serigala sebagai predator puncak.",
+        },
+        Gurun: {
+          produsen:
+            "https://cdn.pixabay.com/photo/2021/03/08/13/14/cacti-6079081_1280.png",
+          konsumenPrimer:
+            "https://st4.depositphotos.com/1006076/24259/v/450/depositphotos_242596644-stock-illustration-cute-dipodinae-mice-jaculus-isolated.jpg",
+          konsumenSekunder: "https://pbs.twimg.com/media/FbnSj7jVEAEn1b1.jpg",
+          konsumenPuncak:
+            "https://st.depositphotos.com/2664341/4961/v/450/depositphotos_49617961-stock-illustration-eagle-cartoon.jpg",
+          deskripsi:
+            "Di gurun, kaktus dimakan oleh tikus gurun, lalu dimangsa kadal, dan elang sebagai predator puncak.",
+        },
+        Laut: {
+          produsen:
+            "https://asset.kompas.com/crops/acA5T2U5S0AyD4S3MNk5KFDSffo=/31x0:960x619/750x500/data/photo/2022/05/06/6274c52a68bbb.jpg",
+          konsumenPrimer:
+            "https://cdn.idntimes.com/content-images/community/2024/12/1024px-engraulis-japonicus-01-2840a4debc814a2c5e511d2758806583.jpeg",
+          konsumenSekunder:
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Coho_Spawning_on_the_Salmon_River_%2816335493292%29.jpg/1200px-Coho_Spawning_on_the_Salmon_River_%2816335493292%29.jpg",
+          konsumenPuncak:
+            "https://akcdn.detik.net.id/visual/2022/10/06/ilustrasi-jenis-ikan-terbesar-di-dunia-2_43.jpeg?w=720&q=90",
+          deskripsi:
+            "Di laut, plankton dimakan oleh ikan kecil, lalu dimakan ikan besar, dan hiu sebagai predator puncak.",
+        },
+        Kutub: {
+          produsen:
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Meganyctiphanes_norvegica2.jpg/1200px-Meganyctiphanes_norvegica2.jpg",
+          konsumenPrimer:
+            "https://media.istockphoto.com/id/494189710/id/foto/ikan-raksasa-hitam-laut-bass.jpg?s=612x612&w=0&k=20&c=bpSOQYi7SPYJLpoW2_eEMJPRuz0VBUzfXcmPs_oGY94=",
+          konsumenSekunder:
+            "https://1.bp.blogspot.com/-pZp5ORuexA0/Xuy0Qfm7gqI/AAAAAAAADc4/Qr8zvfr1nMU8XNnXpTgDURgkl0e-_lpIwCLcBGAsYHQ/s1600/Anjing%2BLaut.png",
+          konsumenPuncak: "https://cdn.wallpapersafari.com/81/79/eEN2J1.jpg",
+          deskripsi:
+            "Di kutub, krill dimakan oleh ikan, kemudian oleh anjing laut, dan beruang kutub sebagai predator puncak.",
+        },
+      };
+
+      function updateFoodChain(biome) {
+        let chain = foodChains[biome];
+        if (!chain) return;
+
+        document.getElementById("produsen").src = chain.produsen;
+        document.getElementById("konsumen-primer").src = chain.konsumenPrimer;
+        document.getElementById("konsumen-sekunder").src =
+          chain.konsumenSekunder;
+        document.getElementById("konsumen-puncak").src = chain.konsumenPuncak;
+        document.getElementById("role-description").innerText = chain.deskripsi;
+      }
+
+      function showSimulation(biome) {
+        playButtonSound();
+        const biomeBackgrounds = {
+          Hutan:
+            "https://png.pngtree.com/thumb_back/fh260/background/20230315/pngtree-forest-path-cartoon-background-image_1948359.jpg",
+          PadangRumput:
+            "https://media.istockphoto.com/id/1339342565/id/vektor/siluet-rumput-gambar-mulus-padang-rumput-hijau-musim-panas-lanskap-pedesaan-yang-sederhana.jpg?s=612x612&w=0&k=20&c=vbczY34t_5z1dTZhncCKJlaVMs3SQICl_sCrc3CRqTc= ",
+          Gurun:
+            "https://cdn.pixabay.com/photo/2020/04/30/10/08/desert-5112222_640.png",
+          Laut: "https://i.pinimg.com/736x/61/e0/56/61e05610afd2f9bc8b9379f5de44450f.jpg",
+          Kutub:
+            "https://st3.depositphotos.com/12889260/34452/v/450/depositphotos_344526300-stock-illustration-arctic-landscape-with-ice-igloo.jpg",
+        };
+
+        document.getElementById("biome-menu").classList.add("hidden");
+        document.getElementById("simulation").classList.remove("hidden");
+        document.getElementById("biome-name").innerText =
+          "Simulasi Bioma: " + biome;
+        document.getElementById(
+          "simulation"
+        ).style.backgroundImage = `url('${biomeBackgrounds[biome]}')`;
+
+        updateFoodChain(biome);
+      }
+
+      function selectOrganism(selected) {
+        playButtonSound();
+        if (selected === "konsumen-primer") {
+          document.getElementById("produsen").style.display = "none";
+        } else if (selected === "konsumen-sekunder") {
+          document.getElementById("konsumen-primer").style.display = "none";
+        } else if (selected === "konsumen-puncak") {
+          document.getElementById("konsumen-sekunder").style.display = "none";
+        }
+      }
+
+      function resetFoodChain() {
+        document.getElementById("produsen").style.display = "block";
+        document.getElementById("konsumen-primer").style.display = "block";
+        document.getElementById("konsumen-sekunder").style.display = "block";
+        document.getElementById("konsumen-puncak").style.display = "block";
+      }
+
+      function toggleMute() {
+        playButtonSound();
+        isMuted = !isMuted;
+        bgMusic.muted = isMuted;
+        let newIcon = isMuted
+          ? "https://cdn.pixabay.com/photo/2021/10/09/12/45/audio-on-6694070_1280.png"
+          : "https://cdn.pixabay.com/photo/2021/10/09/12/45/mute-6694067_1280.png";
+        muteBtn.src = newIcon;
+        muteBtnBiome.src = newIcon;
+      }
+    </script>
+  </body>
+</html>
